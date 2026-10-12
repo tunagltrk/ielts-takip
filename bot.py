@@ -3,6 +3,7 @@
 Bilkent IELTS kayıt takip botu (bulut versiyonu, GitHub Actions'ta çalışır).
 Her 20 saniyede 6 oturumu kontrol eder; biri açılınca Telegram'dan telefona mesaj atar.
 Bir çalışma ~55 dakika sürer; GitHub her saat yenisini başlatır.
+Her gün 09:00 ve 21:00'de "bot çalışıyor" kontrol mesajı atar.
 """
 
 import json
@@ -13,8 +14,9 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
 
-INTERVAL = 20          # saniye
-RUN_MINUTES = 55       # tek çalışmanın süresi
+INTERVAL = 20               # saniye
+RUN_MINUTES = 55            # tek çalışmanın süresi
+KONTROL_SAATLERI = (9, 21)  # kontrol mesajı saatleri (Türkiye saati)
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID") or "1812046015,5897839750"
@@ -68,6 +70,7 @@ def telegram(text):
 
 def main():
     manual = os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
+    kontrol_saati = datetime.now(TR).hour in KONTROL_SAATLERI
     end = time.time() + RUN_MINUTES * 60
     notified = set()
     errors = 0
@@ -92,8 +95,9 @@ def main():
 
         print(f"[{now()}] " + " | ".join(status))
 
-        if first_round and manual:
-            telegram("✅ IELTS botu çalışıyor. Şu anki durum:\n" + "\n".join(status))
+        if first_round and (manual or kontrol_saati):
+            telegram("😌 PANİK YOK AŞKIM — BOT KONTROL MESAJI\n\n"
+                     "✅ Bot çalışıyor, kayıt henüz açılmadı:\n" + "\n".join(status))
         first_round = False
 
         if errors >= 30:
