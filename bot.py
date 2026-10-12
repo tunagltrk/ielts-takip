@@ -17,7 +17,7 @@ INTERVAL = 20          # saniye
 RUN_MINUTES = 55       # tek çalışmanın süresi
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
-TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID") or "1812046015"
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID") or "1812046015,5897839750"
 
 PRODUCT_ID = "aa1ac5a7-f66f-45b8-a919-059501c5d35b"
 SESSIONS = {
