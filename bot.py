@@ -54,14 +54,16 @@ def check(sid):
 
 
 def telegram(text):
+    text += "\n\nTuna Beyza'yı çok seviyor ❤️"
     if not (TELEGRAM_TOKEN and TELEGRAM_CHAT_ID):
         print(f"[{now()}] Telegram ayarlı değil, mesaj gönderilemedi: {text}")
         return
-    try:
-        body = urllib.parse.urlencode({"chat_id": TELEGRAM_CHAT_ID, "text": text}).encode()
-        urllib.request.urlopen(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", body, timeout=10)
-    except Exception as e:
-        print(f"[{now()}] Telegram hatası: {e}")
+    for chat_id in TELEGRAM_CHAT_ID.split(","):
+        try:
+            body = urllib.parse.urlencode({"chat_id": chat_id.strip(), "text": text}).encode()
+            urllib.request.urlopen(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", body, timeout=10)
+        except Exception as e:
+            print(f"[{now()}] Telegram hatası ({chat_id}): {e}")
 
 
 def main():
